@@ -1,8 +1,4 @@
 def extract_ticket_number(ticket_id):
-    """
-    Extract numeric portion from ticket ID (e.g. 'T001', 'T10', 'T2')
-    to ensure proper numeric order instead of alphabetical tie-breaking.
-    """
     if isinstance(ticket_id, str):
         digits = "".join(ch for ch in ticket_id if ch.isdigit())
         if digits:
@@ -11,15 +7,8 @@ def extract_ticket_number(ticket_id):
 
 
 def get_work_queue(tickets):
-    """
-    Returns a list of ONLY open tickets, sorted by priority (critical > high > medium > low)
-    and then by numeric ID for tie-breaking.
-    An in_progress or resolved ticket must not appear in this queue.
-    """
-    # 1. Filter for strictly OPEN tickets only
     open_tickets = [t for t in tickets if t.get("status") == "open"]
-            
-    # 2. Priority ranking order: lower rank sorts higher
+
     priority_rank = {
         "critical": 1,
         "high": 2,
@@ -27,7 +16,6 @@ def get_work_queue(tickets):
         "low": 4
     }
     
-    # 3. Sort by priority rank, then by numeric ticket ID for ties
     def sorting_rule(ticket):
         rank = priority_rank.get(str(ticket.get("priority", "")).lower(), 99)
         return (rank, extract_ticket_number(ticket.get("id", "")))
@@ -37,18 +25,6 @@ def get_work_queue(tickets):
 
 
 def generate_report(tickets):
-    """
-    Generates a comprehensive quality summary report of all tickets.
-
-    Metrics include:
-    - total: Total number of tickets
-    - by_status: Breakdown count by ticket status
-    - by_priority: Breakdown count by ticket priority
-    - by_category: Breakdown count by ticket category
-    - unresolved: Count of tickets in 'open' or 'in_progress' status
-    - resolved: Count of tickets in 'resolved' status
-    - resolution_percentage: (resolved / total * 100), safely 0.0% for empty datasets
-    """
     total = len(tickets)
     by_status = {}
     by_priority = {}
@@ -61,19 +37,15 @@ def generate_report(tickets):
         priority = ticket.get("priority")
         category = ticket.get("category")
 
-        # Tally status
         if status:
             by_status[status] = by_status.get(status, 0) + 1
 
-        # Tally priority
         if priority:
             by_priority[priority] = by_priority.get(priority, 0) + 1
 
-        # Tally category
         if category:
             by_category[category] = by_category.get(category, 0) + 1
 
-        # Tally resolved vs unresolved
         if status == "resolved":
             resolved_count += 1
         elif status in ["open", "in_progress"]:
