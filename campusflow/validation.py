@@ -8,7 +8,7 @@ def validate_title(title: str) -> str:
 
 
 def validate_category(category: str) -> str:
-    """Return a canonical category or raise ValueError."""
+    """Return a accepted category or raise ValueError."""
     if not isinstance(category, str):
         raise ValueError("Category must be a string.")
 
@@ -18,24 +18,24 @@ def validate_category(category: str) -> str:
         "software": "Software",
         "other": "Other",
     }
-    canonical = categories.get(category.strip().casefold())
+    accepted = categories.get(category.strip().casefold())
 
-    if canonical is None:
+    if accepted is None:
         raise ValueError(
             "Category must be Network, Hardware, Software, or Other."
         )
-    return canonical
+    return accepted
 
 
 def validate_urgency(urgency: str) -> str:
-    """Return canonical lower-case urgency or raise ValueError."""
+    """Return accepted lower-case urgency or raise ValueError."""
     if not isinstance(urgency, str):
         raise ValueError("Urgency must be low, medium, or high.")
 
-    canonical = urgency.strip().casefold()
-    if canonical not in {"low", "medium", "high"}:
+    accepted = urgency.strip().casefold()
+    if accepted not in {"low", "medium", "high"}:
         raise ValueError("Urgency must be low, medium, or high.")
-    return canonical
+    return accepted
 
 
 def validate_affected_users(affected_users) -> int:
